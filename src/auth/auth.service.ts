@@ -16,6 +16,7 @@ import { RestorePasswordDto } from './dto/restore-password.dto';
 import { ResponseCode, ResponseMessage } from 'src/common/enums/errors.enum';
 import { MailService } from 'src/common/services/mail/mail.service';
 import { ResetPasswordInput } from './dto/reset-password.dto';
+import { RegisterAuthDto } from './dto/register-auth.dto';
 // import { EmailResetPasswordData } from 'src/common/services/interfaces/email-reset-password.interface';
 
 @Injectable()
@@ -228,5 +229,24 @@ export class AuthService {
       plainPassword,
       hashedPassword,
     };
+  }
+
+  async registerUser(body: RegisterAuthDto) {
+    const { name, email, password, phone } = body;
+    const plainToHash = await hash(password, 10);
+    const user = await this.prismaService.user.create({
+      data: {
+        name,
+        email,
+        password: plainToHash,
+        phone,
+        role: {
+          create: {
+            name: 'admin',
+          },
+        },
+      },
+    });
+    return user;
   }
 }

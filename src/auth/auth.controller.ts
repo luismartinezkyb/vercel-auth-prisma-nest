@@ -18,6 +18,7 @@ import { User } from 'src/common/decorators/get-user.decorator';
 import { UserResponse } from './interfaces/user-response.interface';
 import { RestorePasswordDto } from './dto/restore-password.dto';
 import { ResetPasswordInput } from './dto/reset-password.dto';
+import { RegisterAuthDto } from './dto/register-auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -58,5 +59,10 @@ export class AuthController {
   @Get('encrypt/:password')
   async encryptPassword(@Param('password') plainPassword: string) {
     return this.authService.encryptPassword(plainPassword);
+  }
+  @HttpCode(HttpStatus.OK)
+  @Post('register')
+  async registerUser(@Body() registerDto: RegisterAuthDto) {
+    return this.authService.registerUser(registerDto);
   }
 }
