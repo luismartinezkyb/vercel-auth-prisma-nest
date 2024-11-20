@@ -233,6 +233,13 @@ export class AuthService {
 
   async registerUser(body: RegisterAuthDto) {
     const { name, email, password, phone } = body;
+    const userExists = await this.prismaService.user.count({
+      where: {
+        email,
+      },
+    });
+    if (userExists === 1) throw new ConflictException('User already exists');
+    // if(userExists)
     const plainToHash = await hash(password, 10);
     const user = await this.prismaService.user.create({
       data: {
@@ -247,6 +254,7 @@ export class AuthService {
         },
       },
     });
+    delete user.password;
     return user;
   }
 }
